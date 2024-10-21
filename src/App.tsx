@@ -1,29 +1,26 @@
-// import { useState, useEffect } from "react";
-
-import GlobalStyle from "./styles/globalStyle.ts";
-// import Loading from "./components/loading.tsx";
+// import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+// import { clusterApiUrl } from '@solana/web3.js';
+// import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
+import WalletProviderComponent from "../src/components/section/WalletProvider.tsx";
 import { MainRouter } from "./routes/index.tsx";
+import { Buffer } from 'buffer';
+import { UserProvider } from "./contexts/UserContext";
+window.Buffer = Buffer;
 
 function App() {
-  // const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     // setIsLoading(true);
-  //   }, 1000);
-
-  //   return () => {
-  //     clearTimeout(timer);
-  //     // setIsLoading(false);
-  //   };
-  // }, []);
+  // const network = clusterApiUrl('devnet');
+  // const wallets = [
+  //   new PhantomWalletAdapter(),
+  //   // Add more adapters as needed
+  // ];
 
   return (
-    <>
-      <GlobalStyle />
-      {/* {isLoading ? <Loading /> : } */}
-      <MainRouter />
-    </>
+    <UserProvider>
+      <WalletProviderComponent>
+
+        <MainRouter />
+      </WalletProviderComponent>
+    </UserProvider>
   );
 }
 

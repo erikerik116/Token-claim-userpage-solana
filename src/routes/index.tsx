@@ -1,9 +1,11 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "../components/layout";
 import Home from "../pages/home";
-import Art from "../pages/art";
-import Team from "../pages/team";
-import Faqs from "../pages/faqs";
+import Solana from "../pages/Solana";
+// import Bscscan from "../pages/Bscscan";
+// import Ton from "../pages/Ton";
+// import Pulsechain from "../pages/Pulsechain";
+// import Claim from "../components/section/Claim";
 
 export const MainRouter = () => {
   return (
@@ -11,9 +13,12 @@ export const MainRouter = () => {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/art" element={<Art />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/faqs" element={<Faqs />} />
+          <Route path="/solana" element={<Solana />} />
+          {/* <Route path="/bscscan" element={<Bscscan />} />
+          <Route path="/ton" element={<Ton />} />
+          <Route path="/pulsechain" element={<Pulsechain />} />
+          <Route path="/claim" element={<Claim />} /> */}
+
         </Route>
       </Routes>
     </BrowserRouter>

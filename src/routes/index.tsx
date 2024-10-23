@@ -5,7 +5,7 @@ import Solana from "../pages/Solana";
 // import Bscscan from "../pages/Bscscan";
 // import Ton from "../pages/Ton";
 // import Pulsechain from "../pages/Pulsechain";
-// import Claim from "../components/section/Claim";
+import Claim from "../components/section/Claim";
 
 export const MainRouter = () => {
   return (
@@ -16,8 +16,8 @@ export const MainRouter = () => {
           <Route path="/solana" element={<Solana />} />
           {/* <Route path="/bscscan" element={<Bscscan />} />
           <Route path="/ton" element={<Ton />} />
-          <Route path="/pulsechain" element={<Pulsechain />} />
-          <Route path="/claim" element={<Claim />} /> */}
+          <Route path="/pulsechain" element={<Pulsechain />} />*/}
+          <Route path="/claim" element={<Claim />} />
 
         </Route>
       </Routes>

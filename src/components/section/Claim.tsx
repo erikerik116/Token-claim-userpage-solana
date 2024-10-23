@@ -15,7 +15,7 @@ const Claim = () => {
     const { setIsConnected, setPubkey } = useUserContext();
 
 
-    const amount = 37;
+    const amount = 100;
 
 
     useEffect(() => {

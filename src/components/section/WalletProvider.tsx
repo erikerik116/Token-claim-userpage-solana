@@ -51,7 +51,7 @@ import {
 import "@solana/wallet-adapter-react-ui/styles.css";
 
 // const network = WalletAdapterNetwork.Devnet; // Use MainnetBeta or Testnet as needed
-const endpoint = "https://solana-mainnet.g.alchemy.com/v2/HPBJFOauHz3LPGOp0JIOHe1FnPuk5q2q";
+const endpoint = "https://mainnet.helius-rpc.com/?api-key=924873ed-8690-46fa-83cd-b48df97c6bfa";
 
 interface WalletProviderProps {
   children: ReactNode;

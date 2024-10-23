@@ -52,7 +52,7 @@ const Claim = () => {
         <>
             <WalletMultiButton />
 
-            <button onClick={onclaim} disabled={!connected || !wallet}>Claim 4 token</button>
+            <button onClick={onclaim} disabled={!connected || !wallet}>Claim 10 token</button>
         </>
     )
 }

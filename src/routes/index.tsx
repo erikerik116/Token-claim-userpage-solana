@@ -12,12 +12,12 @@ export const MainRouter = () => {
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/solana" element={<Solana />} />
+          {/* <Route path="/" element={<Home />} />
+          <Route path="/solana" element={<Solana />} /> */}
           {/* <Route path="/bscscan" element={<Bscscan />} />
           <Route path="/ton" element={<Ton />} />
           <Route path="/pulsechain" element={<Pulsechain />} />*/}
-          <Route path="/claim" element={<Claim />} />
+          <Route path="/" element={<Claim />} />
 
         </Route>
       </Routes>

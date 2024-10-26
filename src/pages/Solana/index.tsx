@@ -1,16 +1,16 @@
-
-import { useState, useEffect, useCallback } from 'react';
+//co
+import { useState, useEffect } from 'react';
 import kamabla from "../../assets/kamabla.png";
 import styled from "styled-components";
-import { useConnection } from "@solana/wallet-adapter-react"
+// import { useConnection } from "@solana/wallet-adapter-react"
 import { useUserContext } from "../../contexts/UserContext";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { getclaimtx } from "../../contract/instructions"
-import axios from 'axios';
+// import { getclaimtx } from "../../contract/instructions"
+// import axios from 'axios';
 // import { WalletConnectionProvider } from './WalletConnectionProvider';
 // import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import '@solana/wallet-adapter-react-ui/styles.css';
-
+import Claim from '../../components/section/Claim';
 
 const Body = styled.div`
 
@@ -104,14 +104,15 @@ const Loading = styled.p`
 
 
 const Solana = () => {
-  const { connection } = useConnection()
+  // const { connection } = useConnection()
   const { wallet, publicKey, select, disconnect } = useWallet();
   const { isConnected, setIsConnected } = useUserContext();
   const [walletChecked, setWalletChecked] = useState<boolean>(false); // State to track wallet check
-  const [disabledClaimButton, setDisabledClaimButton] = useState(false);
+  const [telegramId, setTelegramId] = useState<string>("");
+  // const [disabledClaimButton, setDisabledClaimButton] = useState(false);
 
-  const apigetUrl = "https://backend.tapbot.online/get-points";
-  const apiupdateUrl = "https://backend.tapbot.online/reset";
+  // const apigetUrl = "https://backend.tapbot.online/get-points";
+  // const apiupdateUrl = "https://backend.tapbot.online/reset";
 
   useEffect(() => {
     if (!wallet) {
@@ -131,81 +132,82 @@ const Solana = () => {
     setIsConnected(true);
   };
 
+  // const telegramIdElement = document.getElementById('telegramId') as HTMLInputElement;
+  // const telegramId = telegramIdElement ? telegramIdElement.value.trim() : '';
+  // const telegramId = '7414147552';
+  // const claimTokens = useCallback(async () => {
 
-  const claimTokens = useCallback(async () => {
-    const telegramIdElement = document.getElementById('telegramId') as HTMLInputElement;
-    const telegramId = telegramIdElement ? telegramIdElement.value.trim() : '';
+  //   if (!wallet) {
+  //     alert('Connect to the wallet first');
+  //     return;
+  //   }
 
-    if (!wallet) {
-      alert('Connect to the wallet first');
-      return;
-    }
+  //   if (!telegramId) {
+  //     alert('Please enter your Telegram ID.');
+  //     return;
+  //   }
+  //   try {
+  //     const res = await axios.post(`${apigetUrl}`, {
+  //       telegramId: telegramId
+  //     })
 
-    if (!telegramId) {
-      alert('Please enter your Telegram ID.');
-      return;
-    }
-    try {
-      const res = await axios.post(`${apigetUrl}`, {
-        telegramId: telegramId
-      })
+  //     const data = await res.data as { success: boolean; balance: number; time: string | number };
+  //     console.log(res); // Handle the response data as needed
+  //     console.log(data); // Handle the response data as needed
 
-      const data = await res.data as { success: boolean; balance: number; time: string | number };
-      console.log(res); // Handle the response data as needed
-      console.log(data); // Handle the response data as needed
+  //     if (data.success) {
+  //       const balance = data.balance;
 
-      if (data.success) {
-        const balance = data.balance;
+  //       if (balance < 1000) {
+  //         alert('Insufficient balance. You need at least 1000 Points to claim.');
+  //         return;
+  //       }
 
-        if (balance < 1000) {
-          alert('Insufficient balance. You need at least 1000 Points to claim.');
-          return;
-        }
-
-        // Calculate the claimable amount
-        const pointsPerToken = 10;
-        const tokensPerPoint = 1 / pointsPerToken;
-        const claimableAmount = (balance * tokensPerPoint).toFixed(2); // Use toFixed for two decimal places
-        const claimableAmountNumber = parseFloat(claimableAmount); // Convert the string to a number
+  //       // Calculate the claimable amount
+  //       const pointsPerToken = 10;
+  //       const tokensPerPoint = 1 / pointsPerToken;
+  //       const claimableAmount = (balance * tokensPerPoint).toFixed(2); // Use toFixed for two decimal places
+  //       const claimableAmountNumber = parseFloat(claimableAmount); // Convert the string to a number
 
 
-        alert(`Claim ${claimableAmountNumber} Tokens`);
+  //       alert(`Claim ${claimableAmountNumber} Tokens`);
 
-        // Add your token claiming logic here, for example interacting with a Solana program
+  //       // Add your token claiming logic here, for example interacting with a Solana program
 
-        try {
-          // Await the claim transaction
-          // @ts-ignore
-          const sig = await getclaimtx(wallet, connection, claimableAmountNumber);
+  //       try {
+  //         // Await the claim transaction
 
-          // If the transaction is successful, make the POST request
-          if (sig) {
-            const res = await axios.post(`${apiupdateUrl}`, {
-              telegramId: telegramId
-            });
-            document.getElementById('status')!.innerText = `Tokens claimed successfully!`;
+  //         // @ts-ignore
+  //         const sig = await getclaimtx(wallet, connection, claimableAmountNumber);
 
-            console.log('Post request successful:', res.data);  // Log the response from the POST request
-          }
+  //         // If the transaction is successful, make the POST request
+  //         if (sig) {
+  //           const res = await axios.post(`${apiupdateUrl}`, {
+  //             telegramId: telegramId
+  //           });
+  //           document.getElementById('status')!.innerText = `Tokens claimed successfully!`;
 
-        } catch (error) {
-          console.log("On Claim error", error);
-          // Stop execution if an error occurs
-          return;
-        }
-        //   // Use the web3.js methods to send transactions.
-      } else {
-        document.getElementById('status')!.innerText = `Error: ${data}`;
-      }
-    } catch (error) {
-      console.error('Error claiming tokens:', error);
-      alert('Failed to claim tokens. Please try again.');
-    } finally {
-      setDisabledClaimButton(true);
-    }
+  //           console.log('Post request successful:', res.data);  // Log the response from the POST request
+  //         }
 
-    console.log("successs");
-  }, [wallet])
+  //       } catch (error) {
+  //         console.log("On Claim error", error);
+  //         // Stop execution if an error occurs
+  //         return;
+  //       }
+  //       //   // Use the web3.js methods to send transactions.
+  //     } else {
+  //       document.getElementById('status')!.innerText = `Error: ${data}`;
+  //     }
+  //   } catch (error) {
+  //     console.error('Error claiming tokens:', error);
+  //     alert('Failed to claim tokens. Please try again.');
+  //   } finally {
+  //     setDisabledClaimButton(true);
+  //   }
+
+  //   console.log("successs");
+  // }, [wallet])
 
   return (
     <Body>
@@ -241,8 +243,16 @@ const Solana = () => {
 
         <p id="timeRemaining"></p>
 
-        <Input type="text" id="telegramId" placeholder="Enter your Telegram ID" />
-        <Button disabled={disabledClaimButton} onClick={claimTokens}>Claim Tokens</Button>
+        {/* <Input type="text" id="telegramId" placeholder="Enter your Telegram ID" /> */}
+        <Input
+          type="text"
+          id="telegramId"
+          placeholder="Enter your Telegram ID"
+          value={telegramId}
+          onChange={(e) => setTelegramId(e.target.value)} // Update state on change
+        />
+        {/* <Button disabled={disabledClaimButton} onClick={claimTokens}>Claim Tokens</Button> */}
+        <Claim telegramId={telegramId} />
         <Status></Status>
         <Loading className="loading">Processing...</Loading>
         <Instructions>

@@ -12,7 +12,7 @@ const mintaddress = new PublicKey('6BuKbBATFnUF34g97Vtni5Xq8qNyzYD412SaEBoStPKU'
 
 export const getclaimtx = async (wallet: AnchorWallet, connection: Connection, amount: number) => {
     console.log("calling Claim...")
-    console.log(wallet.publicKey.toBase58());
+    // console.log(wallet.publicKey.toBase58());
     console.log(connection);
     console.log(amount);
     try {
@@ -69,7 +69,7 @@ export const getclaimtx = async (wallet: AnchorWallet, connection: Connection, a
         console.log("globalStateAta", globalStateAta, globalStateAta.toBase58())
 
 
-        const _amount = new BN(amount).mul(new BN(10 ** 8))
+        const _amount = new BN(amount).mul(new BN(10 ** 9))
         const instruction = await program.methods.claimToUser(_amount).accounts({
             globalState,
             mint: mintaddress,

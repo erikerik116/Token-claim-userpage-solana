@@ -18,7 +18,7 @@ export const MainRouter = () => {
           {/* <Route path="/bscscan" element={<Bscscan />} />
           <Route path="/ton" element={<Ton />} />
           <Route path="/pulsechain" element={<Pulsechain />} />*/}
-          {/* <Route path="/" element={<Claim />} /> */}
+          {/* <Route path="/claim" element={<Claim />} /> */}
 
         </Route>
       </Routes>

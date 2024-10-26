@@ -10,7 +10,7 @@ import axios from 'axios';
 // import { WalletConnectionProvider } from './WalletConnectionProvider';
 // import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import '@solana/wallet-adapter-react-ui/styles.css';
-import { WalletModal, WalletModalButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+
 
 const Body = styled.div`
 
@@ -105,7 +105,7 @@ const Loading = styled.p`
 
 const Solana = () => {
   const { connection } = useConnection()
-  const { wallet, publicKey, select, disconnect, connect } = useWallet();
+  const { wallet, publicKey, select, disconnect } = useWallet();
   const { isConnected, setIsConnected } = useUserContext();
   const [walletChecked, setWalletChecked] = useState<boolean>(false); // State to track wallet check
   const [disabledClaimButton, setDisabledClaimButton] = useState(false);

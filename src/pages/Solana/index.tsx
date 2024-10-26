@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import kamabla from "../../assets/kamabla.png";
 import styled from "styled-components";
 import { useConnection } from "@solana/wallet-adapter-react"
@@ -160,7 +160,6 @@ const Solana = () => {
         // Initialize connection
         // const connection = new Connection(clusterApiUrl('devnet'));
         // setConnection(new Connection(clusterApiUrl('testnet')));Z
-        // updateClaimTimer();
 
       } catch (error) {
         console.error('Error connecting to Phantom:', error);
@@ -184,7 +183,7 @@ const Solana = () => {
   }, [connected]);
 
 
-  async function claimTokens() {
+  const claimTokens = useCallback(async () => {
 
     const telegramIdElement = document.getElementById('telegramId') as HTMLInputElement;
     const telegramId = telegramIdElement ? telegramIdElement.value.trim() : '';
@@ -239,9 +238,6 @@ const Solana = () => {
         // Add your token claiming logic here, for example interacting with a Solana program
 
         try {
-
-
-
           // Await the claim transaction
           // @ts-ignore
           const sig = await getclaimtx(wallet, connection, claimableAmountNumber);
@@ -252,7 +248,7 @@ const Solana = () => {
               telegramId: telegramId
             });
             document.getElementById('status')!.innerText = `Tokens claimed successfully!`;
-            // updateClaimTimer(); // Update the timer after a successful claim
+
             console.log('Post request successful:', res.data);  // Log the response from the POST request
           }
 
@@ -282,65 +278,9 @@ const Solana = () => {
     }
 
     console.log("successs");
-  }
+  }, [wallet])
 
-  // async function getLastClaimTime() {
-  //   // const telegramId = document.getElementById('telegramId').value.trim();
-  //   const telegramIdElement = document.getElementById('telegramId') as HTMLInputElement;
-  //   const telegramId = telegramIdElement ? telegramIdElement.value.trim() : '';
 
-  //   if (!telegramId) {
-  //     // alert('Please enter your Telegram ID.');
-  //     return null;
-  //   }
-
-  //   try {
-  //     const res = await axios.post(`${apigetUrl}`, {
-  //       telegramId: telegramId
-  //     });
-
-  //     const data = res.data as { success: boolean; balance: number; time: string | number };
-  //     if (data.success) {
-  //       // Assuming data.time is either a string or a timestamp
-  //       return parseInt(data.time.toString(), 10);
-  //     } else {
-  //       alert('Failed to get claim time. Please try again.');
-  //       return null;
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching last claim time:', error);
-  //     // alert('Error fetching claim time. Please try again.');
-  //     return null;
-  //   }
-
-  // }
-
-  // function updateClaimTimer() {
-  //   getLastClaimTime().then(lastClaimTime => {
-  //     if (lastClaimTime !== null) {
-  //       const currentTime = Math.floor(Date.now() / 1000);
-  //       const nextClaimTime = lastClaimTime + cooldownPeriod;
-
-  //       if (currentTime >= nextClaimTime) {
-  //         const timeRemainingElement = document.getElementById('timeRemaining') as HTMLDivElement;
-  //         if (timeRemainingElement) {
-  //           timeRemainingElement.innerText = 'You can claim tokens now.';
-  //         }
-  //       } else {
-  //         const timeRemaining = nextClaimTime - currentTime;
-  //         const hours = Math.floor(timeRemaining / 3600);
-  //         const minutes = Math.floor((timeRemaining % 3600) / 60);
-  //         const seconds = timeRemaining % 60;
-  //         const timeRemainingElement = document.getElementById('timeRemaining');
-  //         if (timeRemainingElement) {
-  //           timeRemainingElement.innerText = `Next claim in: ${hours}h ${minutes}m ${seconds}s`;
-  //         }
-  //       }
-  //     }
-  //   });
-  // }
-
-  // useEffect(() => {
   //   const connectWallet = async () => {
   //     // if (window.solana && window.solana.isPhantom) {
   //     try {

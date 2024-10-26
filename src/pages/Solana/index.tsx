@@ -2,14 +2,15 @@
 import { useState, useEffect } from 'react';
 import kamabla from "../../assets/kamabla.png";
 import styled from "styled-components";
-import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react"
+import { useConnection } from "@solana/wallet-adapter-react"
 import { useUserContext } from "../../contexts/UserContext";
 import { useWallet } from "@solana/wallet-adapter-react";
-// import { Connection, clusterApiUrl } from '@solana/web3.js';
 import { getclaimtx } from "../../contract/instructions"
 import axios from 'axios';
-// import dotenv from "dotenv"
-// dotenv.config();
+// import { WalletConnectionProvider } from './WalletConnectionProvider';
+// import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import '@solana/wallet-adapter-react-ui/styles.css';
+
 
 const Body = styled.div`
 
@@ -106,20 +107,14 @@ const Solana = () => {
 
   const { publicKey, connected } = useWallet();
   const { connection } = useConnection()
-  const wallet = useAnchorWallet();
+  const wallet = useWallet();
   const { setIsConnected, setPubkey } = useUserContext();
   const [account, setAccount] = useState('');
   const [status, setStatus] = useState('Disconnected');
-  // const [isClaimEnabled, setClaimEnabled] = useState(false);
-  // const [connection, setConnection] = useState<Connection | null>(null);
   const [walletChecked, setWalletChecked] = useState<boolean>(false); // State to track wallet check
-  const cooldownPeriod = 24 * 60 * 60; // Example cooldown period in seconds
-  // const [successflag, setSucceessflag] = useState<boolean>(false);
 
-  // const apigetUrl = import.meta.env.VITE_API_URL_GET;
-  // const apiupdateUrl = import.meta.env.VITE_API_URL_UPDATE;
-  const apigetUrl = "http://kamabla-backend-production-8ce2.up.railway.app/get-points";
-  const apiupdateUrl = "http://kamabla-backend-production-8ce2.up.railway.app/reset";
+  const apigetUrl = "https://backend.tapbot.online/get-points";
+  const apiupdateUrl = "https://backend.tapbot.online/reset";
   console.log(account);
   console.log(status);
   useEffect(() => {
@@ -135,7 +130,7 @@ const Solana = () => {
   useEffect(() => {
     console.log('environment files ===> ', apigetUrl)
   }, [])
-  // const amount = 4;
+
   const connectWallet = async () => {
     if (window.solana && window.solana.isPhantom) {
       try {
@@ -165,7 +160,7 @@ const Solana = () => {
         // Initialize connection
         // const connection = new Connection(clusterApiUrl('devnet'));
         // setConnection(new Connection(clusterApiUrl('testnet')));Z
-        updateClaimTimer();
+        // updateClaimTimer();
 
       } catch (error) {
         console.error('Error connecting to Phantom:', error);
@@ -176,33 +171,20 @@ const Solana = () => {
     } else {
       alert('No Solana wallet detected. Please install Phantom or another compatible wallet.');
       setWalletChecked(true);
-
-
     }
   };
+
   useEffect(() => {
     setIsConnected(connected);
     if (!publicKey) {
       console.log("Wallet not connected")
-
     } else {
       setPubkey(publicKey);
     }
   }, [connected]);
 
-  // const claimTokens = async () => {
-  //   try {
-  //     await getclaimtx(wallet, connection, amount)
-  //   } catch (error) {
-  //     console.log("On Claim error ", error)
-  //     return
-  //   }
-
-  // }
 
   async function claimTokens() {
-
-
 
     const telegramIdElement = document.getElementById('telegramId') as HTMLInputElement;
     const telegramId = telegramIdElement ? telegramIdElement.value.trim() : '';
@@ -257,7 +239,11 @@ const Solana = () => {
         // Add your token claiming logic here, for example interacting with a Solana program
 
         try {
+
+
+
           // Await the claim transaction
+          // @ts-ignore
           const sig = await getclaimtx(wallet, connection, claimableAmountNumber);
 
           // If the transaction is successful, make the POST request
@@ -266,7 +252,7 @@ const Solana = () => {
               telegramId: telegramId
             });
             document.getElementById('status')!.innerText = `Tokens claimed successfully!`;
-            updateClaimTimer(); // Update the timer after a successful claim
+            // updateClaimTimer(); // Update the timer after a successful claim
             console.log('Post request successful:', res.data);  // Log the response from the POST request
           }
 
@@ -298,95 +284,95 @@ const Solana = () => {
     console.log("successs");
   }
 
+  // async function getLastClaimTime() {
+  //   // const telegramId = document.getElementById('telegramId').value.trim();
+  //   const telegramIdElement = document.getElementById('telegramId') as HTMLInputElement;
+  //   const telegramId = telegramIdElement ? telegramIdElement.value.trim() : '';
 
-  async function getLastClaimTime() {
-    // const telegramId = document.getElementById('telegramId').value.trim();
-    const telegramIdElement = document.getElementById('telegramId') as HTMLInputElement;
-    const telegramId = telegramIdElement ? telegramIdElement.value.trim() : '';
+  //   if (!telegramId) {
+  //     // alert('Please enter your Telegram ID.');
+  //     return null;
+  //   }
 
-    if (!telegramId) {
-      // alert('Please enter your Telegram ID.');
-      return null;
-    }
+  //   try {
+  //     const res = await axios.post(`${apigetUrl}`, {
+  //       telegramId: telegramId
+  //     });
 
-    try {
-      const res = await axios.post(`${apigetUrl}`, {
-        telegramId: telegramId
-      });
+  //     const data = res.data as { success: boolean; balance: number; time: string | number };
+  //     if (data.success) {
+  //       // Assuming data.time is either a string or a timestamp
+  //       return parseInt(data.time.toString(), 10);
+  //     } else {
+  //       alert('Failed to get claim time. Please try again.');
+  //       return null;
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching last claim time:', error);
+  //     // alert('Error fetching claim time. Please try again.');
+  //     return null;
+  //   }
 
-      const data = res.data as { success: boolean; balance: number; time: string | number };
-      if (data.success) {
-        // Assuming data.time is either a string or a timestamp
-        return parseInt(data.time.toString(), 10);
-      } else {
-        alert('Failed to get claim time. Please try again.');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error fetching last claim time:', error);
-      // alert('Error fetching claim time. Please try again.');
-      return null;
-    }
+  // }
 
-  }
+  // function updateClaimTimer() {
+  //   getLastClaimTime().then(lastClaimTime => {
+  //     if (lastClaimTime !== null) {
+  //       const currentTime = Math.floor(Date.now() / 1000);
+  //       const nextClaimTime = lastClaimTime + cooldownPeriod;
 
-  function updateClaimTimer() {
-    getLastClaimTime().then(lastClaimTime => {
-      if (lastClaimTime !== null) {
-        const currentTime = Math.floor(Date.now() / 1000);
-        const nextClaimTime = lastClaimTime + cooldownPeriod;
+  //       if (currentTime >= nextClaimTime) {
+  //         const timeRemainingElement = document.getElementById('timeRemaining') as HTMLDivElement;
+  //         if (timeRemainingElement) {
+  //           timeRemainingElement.innerText = 'You can claim tokens now.';
+  //         }
+  //       } else {
+  //         const timeRemaining = nextClaimTime - currentTime;
+  //         const hours = Math.floor(timeRemaining / 3600);
+  //         const minutes = Math.floor((timeRemaining % 3600) / 60);
+  //         const seconds = timeRemaining % 60;
+  //         const timeRemainingElement = document.getElementById('timeRemaining');
+  //         if (timeRemainingElement) {
+  //           timeRemainingElement.innerText = `Next claim in: ${hours}h ${minutes}m ${seconds}s`;
+  //         }
+  //       }
+  //     }
+  //   });
+  // }
 
-        if (currentTime >= nextClaimTime) {
-          const timeRemainingElement = document.getElementById('timeRemaining') as HTMLDivElement;
-          if (timeRemainingElement) {
-            timeRemainingElement.innerText = 'You can claim tokens now.';
-          }
-        } else {
-          const timeRemaining = nextClaimTime - currentTime;
-          const hours = Math.floor(timeRemaining / 3600);
-          const minutes = Math.floor((timeRemaining % 3600) / 60);
-          const seconds = timeRemaining % 60;
-          const timeRemainingElement = document.getElementById('timeRemaining');
-          if (timeRemainingElement) {
-            timeRemainingElement.innerText = `Next claim in: ${hours}h ${minutes}m ${seconds}s`;
-          }
-        }
-      }
-    });
-  }
+  // useEffect(() => {
+  //   const connectWallet = async () => {
+  //     // if (window.solana && window.solana.isPhantom) {
+  //     try {
+  //       const wallet = window.solana;
+  //       await wallet.connect();
+  //       const account = wallet.publicKey.toString();
+  //       console.log(account);
 
-  useEffect(() => {
-    const connectWallet = async () => {
-      // if (window.solana && window.solana.isPhantom) {
-      try {
-        const wallet = window.solana;
-        await wallet.connect();
-        const account = wallet.publicKey.toString();
-        console.log(account);
+  //       // Safely get the saved account, default to empty string if null
+  //       const savedAccount = localStorage.getItem('account') || '';
+  //       console.log(savedAccount);
 
-        // Safely get the saved account, default to empty string if null
-        const savedAccount = localStorage.getItem('account') || '';
-        console.log(savedAccount);
+  //       if (savedAccount === account) {
+  //         setAccount(savedAccount);
+  //         setIsConnected(true);
+  //         // setClaimEnabled(true);
+  //         // setConnection(new Connection(clusterApiUrl('testnet')));
+  //         updateClaimTimer(); // Call your timer function here
+  //       } else {
+  //         alert(account);
+  //       }
+  //       console.log("Wallet connected")
+  //     } catch (error) {
+  //       console.error('Error connecting to Phantom:', error);
+  //     }
+  //     // } else {
+  //     //   alert('No Solana wallet detected. Please install Phantom or another compatible wallet.');
+  //     // }
+  //   };
 
-        if (savedAccount === account) {
-          setAccount(savedAccount);
-          setIsConnected(true);
-          // setClaimEnabled(true);
-          // setConnection(new Connection(clusterApiUrl('testnet')));
-          updateClaimTimer(); // Call your timer function here
-        } else {
-          alert(account);
-        }
-      } catch (error) {
-        console.error('Error connecting to Phantom:', error);
-      }
-      // } else {
-      //   alert('No Solana wallet detected. Please install Phantom or another compatible wallet.');
-      // }
-    };
-
-    connectWallet();
-  }, []); // Runs once on mount
+  //   connectWallet();
+  // }, []); // Runs once on mount
 
 
   return (
@@ -422,6 +408,7 @@ const Solana = () => {
         <Button id="connectButton" onClick={connectWallet}>Connect Wallet</Button>
 
         <p id="timeRemaining"></p>
+
         <Input type="text" id="telegramId" placeholder="Enter your Telegram ID" />
         <Button id="claimButton" disabled onClick={claimTokens}>Claim Tokens</Button>
         <Status id="status"></Status>

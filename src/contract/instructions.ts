@@ -1,7 +1,6 @@
 import kamabla_idl from './idl/idl.json'
 import { ComputeBudgetProgram, Connection, PublicKey, Transaction } from "@solana/web3.js"
 import { Program, Idl, AnchorProvider, setProvider } from "@coral-xyz/anchor";
-// import type { LockiToken } from "@/types";
 import { AnchorWallet } from "@solana/wallet-adapter-react"
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from "@solana/spl-token";
 import { BN } from "bn.js";
@@ -9,12 +8,6 @@ import { BN } from "bn.js";
 const GLOBAL_SEED: string = "GLOBAL_SEED"
 const programId = new PublicKey('3Rkvu1d2qsSTzNjqjeVD29h1HHNADY6NHh25BARHCCj2');
 const mintaddress = new PublicKey('6BuKbBATFnUF34g97Vtni5Xq8qNyzYD412SaEBoStPKU');
-// const amount = 15;
-// const TOKEN_PROGRAM_ID = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
-
-
-
-
 
 
 export const getclaimtx = async (wallet: AnchorWallet, connection: Connection, amount: number) => {

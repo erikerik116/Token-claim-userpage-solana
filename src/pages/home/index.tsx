@@ -5,7 +5,6 @@ import kamabla from "../../assets/kamabla.png";
 import styled from "styled-components";
 import { Link } from 'react-router-dom';
 
-
 const Body = styled.div`
   font-family: 'New Amsterdam', sans-serif;
       color: chartreuse;

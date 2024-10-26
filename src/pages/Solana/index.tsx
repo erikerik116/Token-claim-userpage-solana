@@ -10,7 +10,7 @@ import axios from 'axios';
 // import { WalletConnectionProvider } from './WalletConnectionProvider';
 // import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import '@solana/wallet-adapter-react-ui/styles.css';
-
+import { WalletModal, WalletModalButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
 const Body = styled.div`
 
@@ -104,111 +104,47 @@ const Loading = styled.p`
 
 
 const Solana = () => {
-
-  const { publicKey, connected } = useWallet();
   const { connection } = useConnection()
-  const wallet = useWallet();
-  const { setIsConnected, setPubkey } = useUserContext();
-  const [account, setAccount] = useState('');
-  const [status, setStatus] = useState('Disconnected');
+  const { wallet, publicKey, select, disconnect, connect } = useWallet();
+  const { isConnected, setIsConnected } = useUserContext();
   const [walletChecked, setWalletChecked] = useState<boolean>(false); // State to track wallet check
+  const [disabledClaimButton, setDisabledClaimButton] = useState(false);
 
   const apigetUrl = "https://backend.tapbot.online/get-points";
   const apiupdateUrl = "https://backend.tapbot.online/reset";
-  console.log(account);
-  console.log(status);
-  useEffect(() => {
-    setIsConnected(connected);
-    if (!publicKey) {
-      console.log("Wallet not connected")
 
+  useEffect(() => {
+    if (!wallet) {
+      setWalletChecked(true);
+      setIsConnected(false);
     } else {
-      setPubkey(publicKey);
+      setWalletChecked(false);
+      setIsConnected(true);
     }
-  }, [connected]);
-
-  useEffect(() => {
-    console.log('environment files ===> ', apigetUrl)
-  }, [])
+    console.log(wallet, "wallet");
+  }, [publicKey, wallet]);
 
   const connectWallet = async () => {
-    if (window.solana && window.solana.isPhantom) {
-      try {
-        const UIwallet = window.solana;
-        await UIwallet.connect();
-
-        const account = UIwallet.publicKey.toString();
-        console.log(account);
-        setAccount(account);
-        setStatus(`Connected: ${account}`);
-        localStorage.setItem('account', account);
-        // setClaimEnabled(true);
-        document.getElementById('connectButton')!.textContent = 'Connected';
-        const connectButton = document.getElementById('connectButton') as HTMLButtonElement | null;
-        if (connectButton) {
-          connectButton.textContent = 'Connected';
-          connectButton.disabled = true;
-        }
-        document.getElementById('status')!.innerText = `Connected: ${account}`;
-        const claimButton = document.getElementById('claimButton') as HTMLButtonElement | null;
-        if (claimButton) {
-          claimButton.disabled = false;
-          claimButton.addEventListener('click', claimTokens);
-        }
-        alert('Please enter your Telegram ID.');
-
-        // Initialize connection
-        // const connection = new Connection(clusterApiUrl('devnet'));
-        // setConnection(new Connection(clusterApiUrl('testnet')));Z
-
-      } catch (error) {
-        console.error('Error connecting to Phantom:', error);
-        alert('Failed to connect to Phantom. Please try again.');
-      }
-      console.log(window.solana);
-      console.log(apigetUrl);
-    } else {
-      alert('No Solana wallet detected. Please install Phantom or another compatible wallet.');
-      setWalletChecked(true);
-    }
+    console.log("connecting")
+    select('Phantom' as keyof typeof select)
+    // await connect()
+    setIsConnected(true);
   };
-
-  useEffect(() => {
-    setIsConnected(connected);
-    if (!publicKey) {
-      console.log("Wallet not connected")
-    } else {
-      setPubkey(publicKey);
-    }
-  }, [connected]);
 
 
   const claimTokens = useCallback(async () => {
-
     const telegramIdElement = document.getElementById('telegramId') as HTMLInputElement;
     const telegramId = telegramIdElement ? telegramIdElement.value.trim() : '';
 
-    if (!wallet || !wallet.publicKey) {
-      alert('Please connect your wallet first.');
+    if (!wallet) {
+      alert('Connect to the wallet first');
       return;
     }
-
-    console.log('test-telegramID', telegramId)
 
     if (!telegramId) {
       alert('Please enter your Telegram ID.');
       return;
     }
-    const claimButtonElement = document.getElementById('claimButton');
-    const loadingMessage = document.getElementById('loadingMessage');
-
-    if (claimButtonElement instanceof HTMLButtonElement) {
-      claimButtonElement.disabled = true;
-    }
-    if (loadingMessage instanceof HTMLElement) {
-      loadingMessage.style.display = 'block';
-    }
-    console.log(telegramId);
     try {
       const res = await axios.post(`${apigetUrl}`, {
         telegramId: telegramId
@@ -265,60 +201,13 @@ const Solana = () => {
       console.error('Error claiming tokens:', error);
       alert('Failed to claim tokens. Please try again.');
     } finally {
-
-      if (claimButtonElement instanceof HTMLButtonElement) {
-        claimButtonElement.disabled = false;
-      }
-      const claimButton = document.getElementById('claimButton');
-      if (claimButton) {
-        claimButton.style.display = 'none';
-      } else {
-        console.error('claimButton element not found');
-      }
+      setDisabledClaimButton(true);
     }
 
     console.log("successs");
   }, [wallet])
 
-
-  //   const connectWallet = async () => {
-  //     // if (window.solana && window.solana.isPhantom) {
-  //     try {
-  //       const wallet = window.solana;
-  //       await wallet.connect();
-  //       const account = wallet.publicKey.toString();
-  //       console.log(account);
-
-  //       // Safely get the saved account, default to empty string if null
-  //       const savedAccount = localStorage.getItem('account') || '';
-  //       console.log(savedAccount);
-
-  //       if (savedAccount === account) {
-  //         setAccount(savedAccount);
-  //         setIsConnected(true);
-  //         // setClaimEnabled(true);
-  //         // setConnection(new Connection(clusterApiUrl('testnet')));
-  //         updateClaimTimer(); // Call your timer function here
-  //       } else {
-  //         alert(account);
-  //       }
-  //       console.log("Wallet connected")
-  //     } catch (error) {
-  //       console.error('Error connecting to Phantom:', error);
-  //     }
-  //     // } else {
-  //     //   alert('No Solana wallet detected. Please install Phantom or another compatible wallet.');
-  //     // }
-  //   };
-
-  //   connectWallet();
-  // }, []); // Runs once on mount
-
-
   return (
-
-
-
     <Body>
       <Container>
         <Title>CLAIM KAMABLA TOKENS</Title>
@@ -345,13 +234,16 @@ const Solana = () => {
             </div>
           )}
         </div>
-        <Button id="connectButton" onClick={connectWallet}>Connect Wallet</Button>
+        <Button onClick={() => {
+          if (isConnected) disconnect()
+          else connectWallet()
+        }}>{!isConnected ? "Connect Wallet" : "Disconnect"}</Button>
 
         <p id="timeRemaining"></p>
 
         <Input type="text" id="telegramId" placeholder="Enter your Telegram ID" />
-        <Button id="claimButton" disabled onClick={claimTokens}>Claim Tokens</Button>
-        <Status id="status"></Status>
+        <Button disabled={disabledClaimButton} onClick={claimTokens}>Claim Tokens</Button>
+        <Status></Status>
         <Loading className="loading">Processing...</Loading>
         <Instructions>
           <Title>FAQ</Title>
@@ -365,6 +257,5 @@ const Solana = () => {
 
   );
 };
-
 
 export default Solana;
